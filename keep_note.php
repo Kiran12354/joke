@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title></title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <style>
+      .hidden{
+          display: none;
+      }
+  </style>
+    </head>
+    <body style="background: grey;">
+        <div class="jumbotron container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <button class="btn btn-sm btn-warning add" id="add" style="border-radius:15px;float: right"><i class="fa fa-plus-circle"></i> add note</button>
+            </div>
+        </div>
+        <div class="note">
+            
+        </div>
+        
+        
+        </div>
+        <script>
+        const addBtn=document.querySelector('#add');
+        
+        const updateLSData=()=>{
+            const textareadata=document.querySelectorAll('textarea');
+            const notes=[];
+           textareadata.forEach((note)=>{
+            return notes.push(note.value);
+        })
+            localStorage.setItem('notes',JSON.stringify(notes));
+        }
+        
+            const addNewNote=(text='')=>{
+            const note=document.createElement('div');
+            note.classList.add('note');
+            
+            const htmlData=
+                    `<div class="row" style="margin-bottom:10px">
+                    <div class="col-md-2"></div>
+                <div class="col-md-8">    
+                <div class="card">
+                    <div class="card-header">
+                        <button class="btn btn-xs btn-danger delete" style="border-radius:15px;float: right"><i class="fa fa-trash"></i></button>
+                        <button class="btn btn-xs btn-warning edit" style="border-radius:15px;float: right"><i class="fa fa-edit"></i></button>
+                    </div>
+                    <div class="card-body">
+                        <div class="main ${text ? "" : "hidden"}"></div>
+                        <textarea class="${text ? "hidden" : ""} form-control"></textarea>
+                    </div>
+                </div>
+                </div>
+                </div>`;
+        
+                            note.insertAdjacentHTML('afterbegin',htmlData);
+           
+                            const editBtn=note.querySelector('.edit');
+                            const delBtn=note.querySelector('.delete');
+                            const mainDiv=note.querySelector('.main');
+                            const textarea=note.querySelector('textarea');
+                            
+                            delBtn.addEventListener('click',()=>{
+                            note.remove(); 
+                            updateLSData();
+                            });
+                            
+                            textarea.value=text;
+                            mainDiv.innerHTML=text;
+                            
+                            editBtn.addEventListener('click',()=>{
+                                mainDiv.classList.toggle('hidden');
+                                textarea.classList.toggle('hidden');
+                            })
+                            
+                            textarea.addEventListener('change',(event)=>{
+                                const value=event.target.value;
+                                mainDiv.innerHTML=value;
+                                
+                                updateLSData();
+                            })
+                            
+                            document.body.appendChild(note);
+        }
+        
+        const notes=JSON.parse(localStorage.getItem('notes'));
+        if(notes){notes.forEach((note)=>addNewNote(note))};
+        
+        
+        addBtn.addEventListener('click',()=>{
+           addNewNote() ;
+            
+        });
+        </script>
+    </body>
+</html>
